@@ -21,8 +21,8 @@ app.post('/', (req, res) => {
 
 
 app.get('/', (req, res) => {
-    const {limit , pageno} = req.body
-    Category.find({},null,{limit:limit,skip:(pageno-1)*limit})
+    const {limit , pageno} = req.query
+    Category.find({},null,{limit:parseInt(limit),skip:(parseInt(pageno)-1)*parseInt(limit)})
         .then(result => {
             res.send(result);
         }, err => {
@@ -38,10 +38,10 @@ app.get('/:id', (req, res) => {
     })
 })
 
-app.patch('/', (req, res) => {
-    const {id , name} = req.body
+app.patch('/:id', (req, res) => {
+    const {name} = req.body
         
-    Category.updateOne({ _id: id },{ $set: { name: name } }).then(result => {
+    Category.updateOne({ _id: req.params.id },{ $set: { name: name } }).then(result => {
         res.send(result);
     }, err => {
         res.send(err);
