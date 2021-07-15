@@ -21,8 +21,8 @@ app.post('/', (req, res) => {
 
 
 app.get('/', (req, res) => {
-    Category.find({})
-        .limit()
+    const {limit , pageno} = req.body
+    Category.find({},null,{limit:limit,skip:(pageno-1)*limit})
         .then(result => {
             res.send(result);
         }, err => {
@@ -30,24 +30,26 @@ app.get('/', (req, res) => {
         })
 })
 
-app.get('/:name', (req, res) => {
-    Category.find({ name: req.params.name }).then(result => {
+app.get('/:id', (req, res) => {
+    Category.find({ _id: req.params.id }).then(result => {
         res.send(result);
     }, err => {
         res.send(err);
     })
 })
 
-app.patch('/:name', (req, res) => {
-    Category.updateOne({ name: req.params.name }, {$set:{ name: req.body.name} }).then(result => {
+app.patch('/', (req, res) => {
+    const {id , name} = req.body
+        
+    Category.updateOne({ _id: id },{ $set: { name: name } }).then(result => {
         res.send(result);
     }, err => {
         res.send(err);
     })
 })
 
-app.delete('/:name', (req, res) => {
-    Category.deleteOne({ name: req.params.name }).then(result => {
+app.delete('/:id', (req, res) => {
+    Category.deleteOne({ _id: req.params.id }).then(result => {
         res.send(result);
     }, err => {
         res.send(err);

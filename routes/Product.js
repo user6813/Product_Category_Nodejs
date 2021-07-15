@@ -29,7 +29,8 @@ app.post('/', (req, res) => {
 
 
 app.get('/', (req, res) => {
-    Product.find({})
+    const {limit , pageno} = req.body
+    Product.find({},null,{limit:limit,skip:(pageno-1)*limit})
         .populate('category')
         .then(result => {
             res.send(result);
@@ -39,8 +40,8 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/:name', (req, res) => {
-    Product.find({ name: req.params.name })
+app.get('/:id', (req, res) => {
+    Product.find({ _id: req.params.id })
         .populate('category')
         .then(result => {
             res.send(result);
@@ -49,16 +50,18 @@ app.get('/:name', (req, res) => {
         })
 })
 
-app.patch('/:name', (req, res) => {
-    Product.updateOne({ name: req.params.name }, {$set:{ name: req.body.name }}).then(result => {
+app.patch('/', (req, res) => {
+    const {id,name} = req.body 
+
+    Product.updateOne({ _id: id }, {$set:{ name: name }}).then(result => {
         res.send(result);
     }, err => {
         res.send(err);
     })
 })
 
-app.delete('/:name', (req, res) => {
-    Product.deleteOne({ name: req.params.name }).then(result => {
+app.delete('/:id', (req, res) => {
+    Product.deleteOne({ _id: req.params.id }).then(result => {
         res.send(result);
     }, err => {
         res.send(err);
